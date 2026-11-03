@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#111111">
+<title>JJ'S - Deli Shop</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #111111;
+  color: #f5f5f5;
+  font-family: Arial, sans-serif;
+}
+
+header {
+  padding: 22px;
+  border-bottom: 1px solid #292929;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  color: #f28b45;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+header small {
+  display: block;
+  color: #999;
+  font-size: 12px;
+}
+
+main {
+  max-width: 600px;
+  margin: auto;
+  padding: 22px;
+}
+
+h1 {
+  font-size: 27px;
+}
+
+.subtitle {
+  color: #999;
+  line-height: 1.8;
+}
+
+.card {
+  background: #1b1b1b;
+  border: 1px solid #303030;
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  margin: 10px 0;
+  background: #101010;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 9px;
+  font-size: 16px;
+}
+
+button {
+  border: none;
+  border-radius: 9px;
+  padding: 14px 18px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.primary {
+  background: #f28b45;
+  color: #111;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 12px;
+}
+
+nav {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+nav button {
+  flex: 1;
+  background: #252525;
+  color: white;
+}
+
+nav button.active {
+  background: #f28b45;
+  color: #111;
+}
+
+.product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  padding: 16px 0;
+  gap: 10px;
+}
+
+.product:last-child {
+  border: none;
+}
+
+.product button {
+  background: #f28b45;
+  color: #111;
+  font-weight: bold;
+}
+
+.price {
+  color: #f28b45;
+  margin-top: 8px;
+}
+
+.hidden {
+  display: none;
+}
+
+.notice {
+  color: #aaa;
+  font-size: 13px;
+  margin-top: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <div class="logo">JJ'S</div>
+    <small>يعمل دون إنترنت</small>
+  </div>
+  <div style="text-align:left">
+    <strong>JJ's deli shop</strong>
+    <small>طلبات الجملة</small>
+  </div>
+</header>
+
+<main>
+
+<section id="login">
+  <h1>مرحباً بك 👋</h1>
+  <p class="subtitle">
+    سجّل الدخول بحساب الماركت الخاص بك لطلب السندويش.
+  </p>
+
+  <div class="card">
+    <label>اسم المستخدم</label>
+    <input id="username" placeholder="اسم المستخدم">
+
+    <label>كلمة المرور</label>
+    <input id="password" type="password" placeholder="كلمة المرور">
+
+    <button class="primary" onclick="login()">
+      تسجيل الدخول
+    </button>
+
+    <p class="notice">
+      هذه واجهة تجريبية. تسجيل الدخول الحقيقي سيضاف لاحقاً.
+    </p>
+  </div>
+</section>
+
+<section id="shop" class="hidden">
+  <h1>أهلاً بك في JJ'S</h1>
+  <p class="subtitle" id="welcome"></p>
+
+  <nav>
+    <button class="active" onclick="showProducts()">الأصناف</button>
+    <button onclick="showCart()">الطلبات <span id="count">0</span></button>
+  </nav>
+
+  <div class="card" id="content"></div>
+</section>
+
+</main>
+
+<script>
+const products = [
+  {name: "سندويش دجاج", price: 15000},
+  {name: "سندويش شاورما", price: 18000},
+  {name: "سندويش فلافل", price: 10000},
+  {name: "سندويش جبنة", price: 12000}
+];
+
+let cart = [];
+
+function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!username || !password) {
+    alert("يرجى إدخال اسم المستخدم وكلمة المرور");
+    return;
+  }
+
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("shop").classList.remove("hidden");
+  document.getElementById("welcome").textContent =
+    "حساب الماركت: " + username;
+
+  showProducts();
+}
+
+function showProducts() {
+  let html = "<h3>الأصناف المتوفرة</h3>";
+
+  products.forEach((p, i) => {
+    html += `
+      <div class="product">
+        <div>
+          <strong>${p.name}</strong>
+          <div class="price">${p.price.toLocaleString("en-US")} ل.س</div>
+        </div>
+        <button onclick="addToCart(${i})">+ إضافة</button>
+      </div>
+    `;
+  });
+
+  html += `
+    <button class="primary" onclick="showCart()">
+      مراجعة الطلب
+    </button>
+  `;
+
+  document.getElementById("content").innerHTML = html;
+}
+
+function addToCart(index) {
+  cart.push(products[index]);
+  document.getElementById("count").textContent = cart.length;
+  alert("تمت إضافة الصنف إلى الطلب");
+}
+
+function showCart() {
+  if (cart.length === 0) {
+    document.getElementById("content").innerHTML =
+      "<h3>سلة الطلبات فارغة</h3>";
+    return;
+  }
+
+  let total = 0;
+  let html = "<h3>طلبك الحالي</h3>";
+
+  cart.forEach(p => {
+    total += p.price;
+    html += `
+      <div class="product">
+        <strong>${p.name}</strong>
+        <span class="price">${p.price.toLocaleString("en-US")} ل.س</span>
+      </div>
+    `;
+  });
+
+  html += `
+    <h3>المجموع: ${total.toLocaleString("en-US")} ل.س</h3>
+    <button class="primary" onclick="sendOrder()">
+      إرسال الطلب
+    </button>
+  `;
+
+  document.getElementById("content").innerHTML = html;
+}
+
+function sendOrder() {
+  alert("هذه نسخة تجريبية. سنربط إرسال الطلبات بقاعدة البيانات لاحقاً.");
+}
+</script>
+
+</body>
+</html>
